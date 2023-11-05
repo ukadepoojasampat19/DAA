@@ -1,5 +1,4 @@
-// Neha Mundase
-// TIB47
+
 
 // Fractional KnapSack
 
