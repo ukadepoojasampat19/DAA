@@ -1,112 +1,169 @@
-#include <iostream>
-#include <vector>
+// Write a program to implement Bellman-Ford Algorithm using Dynamic Programming and verify the time complexity 
+
+#include<iostream>
 using namespace std;
 
-void ssp(vector<pair<int, int>> g[], int v)
+int v, startv;
+int weight[20][20], isavail[20][20];
+int d[20];		//dist from starting vertex
+
+void inpt()
 {
-    vector<int> dist(v, INT16_MAX);
-    dist[0] = 0; // source
-    for (int i = 0; i < v - 1; i++)
-    {
-        for (int j = 0; j < v; j++)
-        {
-            for (auto x : g[j])
-            {
-                int u = j;
-                int v = x.first;
-                int w = x.second;
+	cout<<"Enter number of vertices : ";
+	cin>>v;
+	cout<<"\nEnter 1 if edge exists else 0.\n";
+	for(int i=0; i<v; i++)
+	{
+		for(int j=0; j<v; j++)
+		{
+			if(i == j)
+				isavail[i][j] = 0;
+			else
+			{
+				cout<<i<<" to "<<j<<" : ";
+				cin>>isavail[i][j];
+			}
+		}
+	}
+	cout<<"Enter weights of edges. \n";
+	for(int i=0; i<v; i++)
+	{
+		for(int j=0; j<v; j++)
+		{
+			weight[i][j] = 999;
+			if(i == j)
+				weight[i][j] = 0;
+			else if(isavail[i][j] == 1)
+			{
+				cout<<i<<" to "<<j<<" : ";
+				cin>>weight[i][j];
+			}
+		}
+	}
+}
 
-                if (dist[u] != INT16_MAX && dist[u] + w < dist[v])
-                {
-                    dist[v] = dist[u] + w;
-                }
-            }
-        }
-    }
+void display()
+{	
+	cout<<"Weights are \n";
+	for(int i=0; i<v; i++)
+	{
+		for(int j=0; j<v; j++)
+		{
+			cout<<weight[i][j]<<"\t";
+		}
+		cout<<"\n";
+	}
+}
 
-    for (int j = 0; j < v; j++)
-    {
-        for (auto x : g[j])
-        {
-            int u = j;
-            int v = x.first;
-            int w = x.second;
-
-            if (dist[u] != INT16_MAX && dist[u] + w < dist[v])
-            {
-                cout<<"graph contains -ve cycle \n";
-                return;
-            }
-        }
-    }
-
-    for (auto i : dist)
-    {
-        cout << i << " ";
-    }
+void belFord()
+{
+	cout<<"\nEnter starting vertex : ";
+	cin>>startv;
+	for(int i=0; i<v; i++)
+	{
+		d[i] = weight[startv][i];
+	}
+	cout<<"\nThe initial distances are.\n";
+	for(int i=0; i<v; i++)
+	{
+		cout<<startv<<" to "<<i<<" = "<<d[i]<<"\n";
+	
+	}
+	for(int itr=0; itr<v-1; itr++)
+	{
+		for(int i=0; i<v; i++)
+		{
+			for(int j=0; j<v; j++)
+			{
+				if(d[j] > d[i] + weight[i][j])
+					d[j] = d[i] + weight[i][j];
+			}
+		}
+	}
+	cout<<"\nThe final distances are.\n";
+	for(int i=0; i<v; i++)
+	{
+		cout<<startv<<" to "<<i<<" = "<<d[i]<<"\n";
+	
+	}
 }
 
 int main()
 {
-    vector<pair<int, int>> g[6];
-    int e;
-    cout << "enter no of edges : ";
-    cin >> e;
-    cout << endl;
-
-    for (int i = 0; i < e; i++)
-    {
-        int u, v, w;
-        cout << "enter s d w \n";
-        cin >> u >> v >> w;
-        g[u].push_back(make_pair(v, w));
-    }
-
-    ssp(g, 6);
-
-    return 0;
+	inpt();
+	display();
+	belFord();
+	return 0;
 }
 
-/*
-nter no of edges : 9
+// OUTPUT >>
 
-enter s d w
-0
-1
-6
-enter s d w
-0
-2
-4
-enter s d w
-0
-3
-5
-enter s d w
-1
-4
--1
-enter s d w
-2
-1
--2
-enter s d w
-2
-4
+// Enter number of vertices : 6
 
-3
-enter s d w
-3
-2
--2
-enter s d w
-3
-5
--1
-enter s d w
-4
-5
-3
-0 1 3 5 0 3
-PS C:\Users\Lenovo\Desktop\code\dsa\graph>
-*/
+// Enter 1 if edge exists else 0.
+// 0 to 1 : 1
+// 0 to 2 : 1
+// 0 to 3 : 1
+// 0 to 4 : 0
+// 0 to 5 : 0
+// 1 to 0 : 0
+// 1 to 2 : 0
+// 1 to 3 : 0
+// 1 to 4 : 1
+// 1 to 5 : 0
+// 2 to 0 : 0
+// 2 to 1 : 1
+// 2 to 3 : 0
+// 2 to 4 : 1
+// 2 to 5 : 0
+// 3 to 0 : 0
+// 3 to 1 : 0
+// 3 to 2 : 1
+// 3 to 4 : 0
+// 3 to 5 : 1
+// 4 to 0 : 0
+// 4 to 1 : 0
+// 4 to 2 : 0
+// 4 to 3 : 0
+// 4 to 5 : 1
+// 5 to 0 : 0
+// 5 to 1 : 0
+// 5 to 2 : 0
+// 5 to 3 : 0
+// 5 to 4 : 0
+// Enter weights of edges.
+// 0 to 1 : 6
+// 0 to 2 : 4
+// 0 to 3 : 5
+// 1 to 4 : -1
+// 2 to 1 : -2
+// 2 to 4 : 3
+// 3 to 2 : -2
+// 3 to 5 : -1
+// 4 to 5 : 3
+// Weights are
+// 0       6       4       5       999     999
+// 999     0       999     999     -1      999
+// 999     -2      0       999     3       999
+// 999     999     -2      0       999     -1
+// 999     999     999     999     0       3
+// 999     999     999     999     999     0
+
+// Enter starting vertex : 0
+
+// The initial distances are.
+// 0 to 0 = 0
+// 0 to 1 = 6
+// 0 to 2 = 4
+// 0 to 3 = 5
+// 0 to 4 = 999
+// 0 to 5 = 999
+
+// The final distances are.
+// 0 to 0 = 0
+// 0 to 1 = 1
+// 0 to 2 = 3
+// 0 to 3 = 5
+// 0 to 4 = 0
+// 0 to 5 = 3
+// PS P:\VsCode>
