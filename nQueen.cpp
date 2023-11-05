@@ -1,125 +1,72 @@
 #include <iostream>
 using namespace std;
+#define N 4
 
-bool isSafe(int **arr, int x, int y, int n)
-{
-    int row = x;
-    int col = y;
-    for (col = 0; col < n; col++)
-    {
-        if (arr[x][col] == 1)
-        {
-            return false;
-        }
-        if (arr[col][y] == 1)
-        {
-            return false;
-        }
+bool isSafe(int arr[N][N], int row, int col) {
+
+  // check that no queens are present in same column above the current queen
+  for (int i = 0; i < row; i++) {
+    if (arr[i][col] == 1) {
+      return false;
     }
+  }
 
-    // upper left
-    row = x;
-    col = y;
-    while (row >= 0 && col >= 0)
-    {
-        if (arr[row][col] == 1)
-        {
-            return false;
-        }
-        row--;
-        col--;
+  // check upper left diagonal
+  for (int i = row, j = col; i >= 0 && j >= 0; i--, j--) {
+    if (arr[i][j] == 1) {
+      return false;
     }
+  }
 
-    // upper right
-    row = x;
-    col = y;
-    while (row >= 0 && col < n)
-    {
-        if (arr[row][col] == 1)
-        {
-            return false;
-        }
-        row--;
-        col++;
-    }
-
-    // lower left
-    row = x;
-    col = y;
-    while (row < n && col >= 0)
-    {
-        if (arr[row][col] == 1)
-        {
-            return false;
-        }
-        row++;
-        col--;
-    }
-
-    // lower right
-    row = x;
-    col = y;
-    while (row < n && col < n)
-    {
-        if (arr[row][col] == 1)
-        {
-            return false;
-        }
-        row++;
-        col++;
-    }
-
-    return true;
-}
-
-bool nQueen(int **bord, int row, int n)
-{
-
-    if (row >= n)
-    {
-        return true;
-    }
-
-    for (int col = 0; col < n; col++)
-    {
-        if (isSafe(bord, row, col, n))
-        {
-            bord[row][col] = 1;
-            if (nQueen(bord, row + 1, n))
-            {
-                return true;
-            }
-            bord[row][col] = 0; // backtrack
-        }
-    }
-
+  
+// check upper right diagonal
+for (int i = row, j = col; i >= 0 && j < N; i--, j++) {
+  if (arr[i][j] == 1) {
     return false;
+  }
 }
 
-int main()
-{
-    int n;
-    cout<<"enter n\n";
-    cin>>n;
+  return true;
+}
 
-    int **bord = new int*[n];
+bool solveNQueens(int arr[N][N], int row) {
+  if (row == N) {
+    return true; // all queens are placed
+  }
+  for (int col = 0; col < N; col++) {
+    if (isSafe(arr, row, col)) {
+      arr[row][col] = 1;
 
-    for (int i = 0; i < n; i++)
-    {
-        bord[i] = new int [n];
-        for(int j = 0 ; j < n;j++){
-            bord[i][j] = 0;
-        }
+      // Recur for the next row
+      if (solveNQueens(arr, row + 1)) {
+        return true;
+      }
+
+      // If placing the queen doesn't lead to a solution, backtrack
+      arr[row][col] = 0;
     }
+  }
+  return false; // No safe position found in this row
+}
 
-    nQueen(bord,0,n);
-    
-    for (int i = 0; i < n; i++)
-    {
-        for(int j = 0 ; j < n;j++){
-            cout<<bord[i][j]<<" "; 
-        }cout<<endl;
+void printBoard(int arr[N][N]) {
+  for (int i = 0; i < N; i++) {
+    for (int j = 0; j < N; j++) {
+      cout << arr[i][j] << " ";
     }
+    cout << endl;
+  }
+}
 
-    return 0;
+int main() {
+  int arr[N][N] = {0};
+
+  if (solveNQueens(arr, 0)) {
+    cout << "Solution found:\n";
+    printBoard(arr);
+  } else {
+    cout << "No solution exists for N = " << N << ".\n";
+  }
+
+  return 0;
 }
